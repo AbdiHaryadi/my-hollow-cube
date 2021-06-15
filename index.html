@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>My Title</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<header>
+			<h1>My Title</h1>
+		</header>
+		<main>
+			<div id="canvas-container">
+				<canvas id="mycanvas" width="800px" height="600px"></canvas>
+			</div>
+			<div id="controller">
+				<div id="translation">
+					<div class="label-and-slider">
+						<label for="posX">X Position</label>
+						<input type="range" min="-100" max="100" value="0" class="slider" id="posX">
+					</div>
+					<div class="label-and-slider">
+					<label for="posY">Y Position</label>
+					<input type="range" min="-100" max="100" value="0" class="slider" id="posY">
+					</div>
+				</div>
+				<div id="rotation">
+					<label for="rotX">X-Axis Rotation</label>
+					<input type="range" min="-180" max="180" value="0" class="slider" id="rotX">
+					<label for="rotY">Y-Axis Rotation</label>
+					<input type="range" min="-180" max="180" value="0" class="slider" id="rotY">
+					<label for="rotZ">Z-Axis Rotation</label>
+					<input type="range" min="-180" max="180" value="0" class="slider" id="rotZ">
+				</div>
+				<div id="scale">
+					<label for="scale">Scale</label>
+					<input type="range" min="50" max="100" value="100" class="slider" id="scale">
+				</div>
+			</div>
+		</main>
+		<footer>
+			<p>Abdi Haryadi, 2021</p>
+		</footer>
+		<script src="scripts.js"></script>
+	</body>
+</html>

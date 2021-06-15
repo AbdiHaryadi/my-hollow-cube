@@ -1,0 +1,42 @@
+body {
+	font-family: sans-serif;
+	margin: 0
+}
+
+header {
+	background-color: #448;
+	display: block;
+}
+
+header h1 {
+	margin: 0;
+	padding: 30px;
+	color: white;
+	text-align: center;
+}
+
+main {
+
+}
+
+#canvas-container {
+	width: 100%;
+	background-color: gray;
+}
+
+#controller {
+	display: flex;
+}
+
+canvas {
+	margin: 0 auto;
+	display: block;
+}
+
+footer {
+	background-color: #6cc;
+	display: block;
+	padding: 20px;
+	text-align: center;
+	color: black;
+}
