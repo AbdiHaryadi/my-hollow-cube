@@ -13,6 +13,56 @@ function matrixMult(m1, m2) {
 	return m3;
 }
 
+function cofactor(m, n, i, j) {
+	// m is matrix nxn
+	return determinant(minor(m, n, i, j), n - 1) * Math.pow(-1, i + j);
+}
+
+function minor(m, n, i, j) {
+	// m is matrix nxn, row and column starts from zero
+	var result = [];
+	for (var row = 0; row < n; row++) {
+		if (row != i) {
+			for (var col = 0; col < n; col++) {
+				if (col != j) {
+					result.push(m[n * row + col]);
+				}
+			}
+		}
+	}
+	return result;
+}
+
+function determinant(m, n) {
+	// m is matrix nxn, row and column starts from zero
+	if (n == 2) { // Base
+		return (m[0] * m[3] - m[1] * m[2]);
+	} else { // Recursion
+		var result = 0;
+		for (var k = 0; k < n; k++) {
+			// Note: row and column starts from zero
+			result += m[k] * cofactor(m, n, 0, k);
+		}
+		return result;
+	}
+}
+
+function adjoint(m, n) {
+	// m is matrix nxn
+	var result = [];
+	for (var row = 0; row < n; row++) {
+		for (var col = 0; col < n; col++) {
+			result.push(cofactor(m, n, col, row));
+		}
+	}
+	return result;
+}
+
+function inverseMatrix(m, n) {
+	var determinantOfM = determinant(m, n);
+	return adjoint(m, n).map(el => el / determinantOfM);
+}
+
 translationMatrix = (x, y) => {
 	return [
 		1, 0, 0, x,
@@ -31,11 +81,11 @@ inverseTranslationMatrix = (x, y) => {
 	];
 };
 
-scaleMatrix = scale => {
+scaleMatrix = (x, y, z) => {
 	return [
-		scale, 0, 0, 0,
-		0, scale, 0, 0,
-		0, 0, scale, 0,
+		x, 0, 0, 0,
+		0, y, 0, 0,
+		0, 0, z, 0,
 		0, 0, 0, 1
 	];
 };
@@ -254,15 +304,18 @@ var yPosSlider = document.getElementById("posY");
 var redSlider = document.getElementById("red");
 var greenSlider = document.getElementById("green");
 var blueSlider = document.getElementById("blue");
-var scaleSlider = document.getElementById("scale");
+var scaleXSlider = document.getElementById("scaleX");
+var scaleYSlider = document.getElementById("scaleY");
+var scaleZSlider = document.getElementById("scaleZ");
 
-var xPos = xPosSlider.value / 100;
 var xPos = xPosSlider.value / 100;
 var yPos = yPosSlider.value / 100;
 var red = redSlider.value / 255;
 var green = greenSlider.value / 255;
 var blue = blueSlider.value / 255;
-var scale = scaleSlider.value / 100;
+var scaleX = scaleXSlider.value / 100;
+var scaleY = scaleYSlider.value / 100;
+var scaleZ = scaleZSlider.value / 100;
 
 xPosSlider.oninput = () => {
 	var newXPos = xPosSlider.value / 100;
@@ -296,17 +349,29 @@ blueSlider.oninput = () => {
 	render();
 };
 
-scaleSlider.oninput = () => {
-	newScale = scaleSlider.value / 100;
-	currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-	currentMatrix = matrixMult(scaleMatrix(newScale / scale), currentMatrix);
-	currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
-	scale = newScale;
+scaleXSlider.oninput = () => {
+	var newScaleX = scaleXSlider.value / 100;
+	currentMatrix = matrixMult(currentMatrix, scaleMatrix(newScaleX / scaleX, 1, 1));
+	scaleX = newScaleX;
+	render();
+};
+
+scaleYSlider.oninput = () => {
+	var newScaleY = scaleYSlider.value / 100;
+	currentMatrix = matrixMult(currentMatrix, scaleMatrix(1, newScaleY / scaleY, 1));
+	scaleY = newScaleY;
+	render();
+};
+
+scaleZSlider.oninput = () => {
+	var newScaleZ = scaleZSlider.value / 100;
+	currentMatrix = matrixMult(currentMatrix, scaleMatrix(1, 1, newScaleZ / scaleZ));
+	scaleZ = newScaleZ;
 	render();
 };
 
 // Update
-currentMatrix = matrixMult(scaleMatrix(scale), currentMatrix);
+currentMatrix = matrixMult(scaleMatrix(scaleX, scaleY, scaleZ), currentMatrix);
 currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
 gl.uniform3f(colorLoc, red, green, blue);
 render();
@@ -317,6 +382,16 @@ function render() {
 	gl.drawElements(gl.TRIANGLES, numPoints, gl.UNSIGNED_SHORT, 0);
 }
 
+function resetTranslation() {
+	currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix);
+	xPosSlider.value = 0;
+	yPosSlider.value = 0;
+	xPos = 0;
+	yPos = 0;
+	render();
+}
+
+
 var clockwiseXAxisRotation;
 var counterclockwiseXAxisRotation;
 
@@ -325,12 +400,12 @@ var counterclockwiseYAxisRotation;
 
 var clockwiseZAxisRotation;
 var counterclockwiseZAxisRotation;
-	
+
 function startClockwiseXAxisRotation() {
 	clockwiseXAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(xAxisRotationMatrix(-5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, xAxisRotationMatrix(-5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);
@@ -342,9 +417,9 @@ function stopClockwiseXAxisRotation() {
 
 function startClockwiseYAxisRotation() {
 	clockwiseYAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(yAxisRotationMatrix(-5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, yAxisRotationMatrix(-5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);
@@ -356,9 +431,9 @@ function stopClockwiseYAxisRotation() {
 
 function startClockwiseZAxisRotation() {
 	clockwiseZAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(zAxisRotationMatrix(-5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, zAxisRotationMatrix(-5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);
@@ -370,9 +445,9 @@ function stopClockwiseZAxisRotation() {
 
 function startCounterclockwiseXAxisRotation() {
 	counterclockwiseXAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(xAxisRotationMatrix(5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, xAxisRotationMatrix(5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);
@@ -384,9 +459,9 @@ function stopCounterclockwiseXAxisRotation() {
 
 function startCounterclockwiseYAxisRotation() {
 	counterclockwiseYAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(yAxisRotationMatrix(5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, yAxisRotationMatrix(5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);
@@ -398,9 +473,9 @@ function stopCounterclockwiseYAxisRotation() {
 
 function startCounterclockwiseZAxisRotation() {
 	counterclockwiseZAxisRotation = setInterval(() => {
-			currentMatrix = matrixMult(inverseTranslationMatrix(xPos, yPos), currentMatrix)
-			currentMatrix = matrixMult(zAxisRotationMatrix(5 * Math.PI / 180), currentMatrix);
-			currentMatrix = matrixMult(translationMatrix(xPos, yPos), currentMatrix);
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(1 / scaleX, 1 / scaleY, 1 / scaleZ));
+			currentMatrix = matrixMult(currentMatrix, zAxisRotationMatrix(5 * Math.PI / 180));
+			currentMatrix = matrixMult(currentMatrix, scaleMatrix(scaleX, scaleY, scaleZ));
 			render();
 		}, 25
 	);

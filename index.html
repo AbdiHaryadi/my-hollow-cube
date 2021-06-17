@@ -21,6 +21,22 @@
 						<label for="posY">Y Position</label>
 						<input type="range" min="-100" max="100" value="0" class="slider" id="posY">
 					</div>
+					<button type="button" onclick="resetTranslation()">Reset</button>
+				</div>
+				<div id="scale" class="controller-item">
+					<h2>Scale (Relative)</h2>
+					<div class="label-and-slider">
+						<label for="scaleX">X Scale</label>
+						<input type="range" min="50" max="100" value="100" class="slider" id="scaleX">
+					</div>
+					<div class="label-and-slider">
+						<label for="scaleY">Y Scale</label>
+						<input type="range" min="50" max="100" value="100" class="slider" id="scaleY">
+					</div>
+					<div class="label-and-slider">
+						<label for="scaleZ">Z Scale</label>
+						<input type="range" min="50" max="100" value="100" class="slider" id="scaleZ">
+					</div>
 				</div>
 				<div id="color" class="controller-item">
 					<h2>Color</h2>
@@ -42,15 +58,8 @@
 				<canvas id="mycanvas" width="600px" height="600px"></canvas>
 			</div>
 			<div class="controller">
-				<div id="scale-section" class="controller-item">
-					<h2>Scale</h2>
-					<div class="label-and-slider">
-						<label for="scale">Scale</label>
-						<input type="range" min="50" max="100" value="100" class="slider" id="scale">
-					</div>
-				</div>
 				<div id="rotation" class="controller-item">
-					<h2>Rotation</h2>
+					<h2>Rotation (Relative)</h2>
 					<div class="label-and-slider">
 						<h3>X-Axis Rotation</h3>
 						<button type="button" onmousedown="startCounterclockwiseXAxisRotation()" onmouseup="stopCounterclockwiseXAxisRotation()" onmouseleave="stopCounterclockwiseXAxisRotation()">Counterclockwise</button>
