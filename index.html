@@ -2,39 +2,70 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>My Title</title>
+		<title>My Hollow Cube</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<header>
-			<h1>My Title</h1>
+			<h1>My Hollow Cube</h1>
 		</header>
 		<main>
-			<div id="canvas-container">
-				<canvas id="mycanvas" width="800px" height="600px"></canvas>
-			</div>
-			<div id="controller">
-				<div id="translation">
+			<div class="controller">
+				<div id="translation" class="controller-item">
+					<h2>Translation</h2>
 					<div class="label-and-slider">
 						<label for="posX">X Position</label>
 						<input type="range" min="-100" max="100" value="0" class="slider" id="posX">
 					</div>
 					<div class="label-and-slider">
-					<label for="posY">Y Position</label>
-					<input type="range" min="-100" max="100" value="0" class="slider" id="posY">
+						<label for="posY">Y Position</label>
+						<input type="range" min="-100" max="100" value="0" class="slider" id="posY">
 					</div>
 				</div>
-				<div id="rotation">
-					<label for="rotX">X-Axis Rotation</label>
-					<input type="range" min="-180" max="180" value="0" class="slider" id="rotX">
-					<label for="rotY">Y-Axis Rotation</label>
-					<input type="range" min="-180" max="180" value="0" class="slider" id="rotY">
-					<label for="rotZ">Z-Axis Rotation</label>
-					<input type="range" min="-180" max="180" value="0" class="slider" id="rotZ">
+				<div id="color" class="controller-item">
+					<h2>Color</h2>
+					<div class="label-and-slider">
+						<label for="red">Red</label>
+						<input type="range" min="0" max="255" value="255" class="slider" id="red">
+					</div>
+					<div class="label-and-slider">
+						<label for="red">Green</label>
+						<input type="range" min="0" max="255" value="255" class="slider" id="green">
+					</div>
+					<div class="label-and-slider">
+						<label for="red">Blue</label>
+						<input type="range" min="0" max="255" value="255" class="slider" id="blue">
+					</div>
 				</div>
-				<div id="scale">
-					<label for="scale">Scale</label>
-					<input type="range" min="50" max="100" value="100" class="slider" id="scale">
+			</div>
+			<div id="canvas-container">
+				<canvas id="mycanvas" width="600px" height="600px"></canvas>
+			</div>
+			<div class="controller">
+				<div id="scale-section" class="controller-item">
+					<h2>Scale</h2>
+					<div class="label-and-slider">
+						<label for="scale">Scale</label>
+						<input type="range" min="50" max="100" value="100" class="slider" id="scale">
+					</div>
+				</div>
+				<div id="rotation" class="controller-item">
+					<h2>Rotation</h2>
+					<div class="label-and-slider">
+						<h3>X-Axis Rotation</h3>
+						<button type="button" onmousedown="startCounterclockwiseXAxisRotation()" onmouseup="stopCounterclockwiseXAxisRotation()" onmouseleave="stopCounterclockwiseXAxisRotation()">Counterclockwise</button>
+						<button type="button" onmousedown="startClockwiseXAxisRotation()" onmouseup="stopClockwiseXAxisRotation()" onmouseleave="stopClockwiseXAxisRotation()">Clockwise</button>
+					</div>
+					<div class="label-and-slider" >
+						<h3>Y-Axis Rotation</h3>
+						<button type="button" onmousedown="startCounterclockwiseYAxisRotation()" onmouseup="stopCounterclockwiseYAxisRotation()" onmouseleave="stopCounterclockwiseYAxisRotation()">Counterclockwise</button>
+						<button type="button" onmousedown="startClockwiseYAxisRotation()" onmouseup="stopClockwiseYAxisRotation()" onmouseleave="stopClockwiseYAxisRotation()">Clockwise</button>
+					</div>
+					<div class="label-and-slider">
+						<h3>Z-Axis Rotation</h3>
+						<button type="button" onmousedown="startCounterclockwiseZAxisRotation()" onmouseup="stopCounterclockwiseZAxisRotation()" onmouseleave="stopCounterclockwiseZAxisRotation()">Counterclockwise</button>
+						<button type="button" onmousedown="startClockwiseZAxisRotation()" onmouseup="stopClockwiseZAxisRotation()" onmouseleave="stopClockwiseZAxisRotation()">Clockwise</button>
+					</div>
 				</div>
 			</div>
 		</main>
